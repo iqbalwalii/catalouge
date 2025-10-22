@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WarmKet — Product Catalog</title>
+  <meta name="description" content="WarmKet product catalog: bedding, towels & linen, pillows, robes, and more." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="ribbon" aria-hidden="true"></div>
+<!-- 
+  <header class="site-header container">
+    <div class="brand">
+      <img src="./assets/logo.png" alt="WarmKet logo" class="logo" />
+      <div class="brand-text">
+        <h1>WarmKet</h1>
+        <p class="subtitle">Hotel & Hospitality Essentials</p>
+      </div>
+    </div>
+    <nav class="site-nav" aria-label="Primary">
+      <a href="#all">All</a>
+      <a href="#Bed Ware" data-filter="Bed Ware">Bed Ware</a>
+      <a href="#Towels & Linen" data-filter="Towels & Linen">Towels & Linen</a>
+      <a href="#Prayer Mat" data-filter="Prayer Mat">Prayer Mat</a>
+    </nav>
+  </header> -->
+
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-copy">
+        <h2>Hotel-grade comfort, made simple.</h2>
+        <p>Browse our core range. Filter by category or search by name/SKU.</p>
+
+        <div class="toolbar">
+          <input id="search" class="search" type="search" placeholder="Search products…" aria-label="Search products" />
+          <select id="category" class="select" aria-label="Filter by category">
+            <option value="">All categories</option>
+          </select>
+        </div>
+      </div>
+      <div class="hero-badge">WarmKet</div>
+    </div>
+    <div class="watermark">WarmKet</div>
+  </section>
+
+  <main class="container">
+    <section id="catalog" class="catalog" aria-live="polite"></section>
+
+    <aside class="totals" id="totals" aria-label="Quotation totals">
+      <div><span>Subtotal (AED)</span><strong id="subtotal">—</strong></div>
+      <div><span>VAT 5% (AED)</span><strong id="vat">—</strong></div>
+      <div class="grand"><span>Grand Total (AED)</span><strong id="grand">—</strong></div>
+    </aside>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>© <span id="year"></span> WarmKet • Hospitality Essentials</p>
+      <p><a href="#top" class="link">Back to top ↑</a></p>
+    </div>
+  </footer>
+
+  <script>
+    // ====== DATA (from your PDF extraction) ======
+    const products = [
+      {"No":1,"Category":"Bed Ware","Item Name":"Flat Sheets Double King","Description":"280 x 280 cm, 100% Ring Spun Cotton, T300 Sateen Weave, White, 145 gsm","Quantity":100,"Unit Price (AED)":48.00,"Total (AED)":4800.00,"image":"/prods/one.jpg"},
+      {"No":2,"Category":"Bed Ware","Item Name":"Flat Sheets Single","Description":"210 x 315 cm, 100% Ring Spun Cotton, T300 Sateen Weave, White, 145 gsm","Quantity":100,"Unit Price (AED)":44.45,"Total (AED)":4445.00,"image":"/prods/two.jpg"},
+      {"No":3,"Category":"Bed Ware","Item Name":"Double Duvet","Description":"220 x 240 cm, 150gsm Microfiber Duvet, 100% Ring Spun Cotton cover","Quantity":100,"Unit Price (AED)":76.80,"Total (AED)":7680.00,"image":"/prods/three.jpg"},
+      {"No":4,"Category":"Bed Ware","Item Name":"Single Duvet Cover","Description":"160 x 225 cm, 50gsm Microfiber, 100% Cotton, White, T300 Sateen Weave","Quantity":100,"Unit Price (AED)":55.20,"Total (AED)":5520.00,"image":"/prods/four.jpg"},
+      {"No":5,"Category":"Bed Ware","Item Name":"Double Mattress Protector","Description":"For mattress 200 x 200 x 30 cm, fitted model","Quantity":100,"Unit Price (AED)":57.60,"Total (AED)":5760.00,"image":"/prods/five.jpg"},
+      {"No":6,"Category":"Bed Ware","Item Name":"Single Mattress Protector","Description":"For mattress 90 x 200 x 30 cm, fitted model","Quantity":100,"Unit Price (AED)":33.60,"Total (AED)":3360.00,"image":"/prods/six.jpg"},
+      {"No":7,"Category":"Bed Ware","Item Name":"Double Duvet Cover","Description":"235 x 260 cm, 100% Cotton, T300 Sateen Weave, White, Bag with Hand Holes","Quantity":100,"Unit Price (AED)":86.40,"Total (AED)":8640.00,"image":"/prods/seven.jpg"},
+      {"No":8,"Category":"Bed Ware","Item Name":"Single Duvet Cover","Description":"160 x 224.5 cm, 100% Cotton, T300 Sateen Weave, White, Bag with Hand Holes","Quantity":100,"Unit Price (AED)":64.80,"Total (AED)":6480.00,"image":"/prods/eight.jpg"},
+      {"No":9,"Category":"Bed Ware","Item Name":"Pillow Protector 50x70","Description":"100% Ring Spun Cotton, T300 Sateen Weave, White, 145 gsm","Quantity":100,"Unit Price (AED)":7.80,"Total (AED)":780.00,"image":"/prods/nine.jpg"},
+      {"No":10,"Category":"Bed Ware","Item Name":"Pillow Protector 45x80","Description":"100% Ring Spun Cotton, T300 Sateen Weave, White, 145 gsm","Quantity":100,"Unit Price (AED)":9.00,"Total (AED)":900.00,"image":"/prods/ten.jpg"},
+      {"No":11,"Category":"Bed Ware","Item Name":"King Pillow","Description":"1000gm, 100% Cotton Velour, Double Piping, 50x80cm","Quantity":100,"Unit Price (AED)":18.00,"Total (AED)":1800.00,"image":"/prods/11.jpg"},
+      {"No":12,"Category":"Bed Ware","Item Name":"Queen Pillow","Description":"1000gm, 100% Cotton Velour, Double Piping, 50x70cm","Quantity":100,"Unit Price (AED)":14.40,"Total (AED)":1440.00,"image":"/prods/12.jpg"},
+      {"No":13,"Category":"Bed Ware","Item Name":"Pillowcase 45x70","Description":"100% Cotton, T300 Sateen Weave, White, 145 gsm","Quantity":100,"Unit Price (AED)":6.60,"Total (AED)":660.00,"image":"/prods/13.jpg"},
+      {"No":14,"Category":"Bed Ware","Item Name":"Pillowcase 50x80","Description":"100% Cotton, T300 Sateen Weave, White, 145 gsm","Quantity":100,"Unit Price (AED)":7.80,"Total (AED)":780.00,"image":"/prods/13.jpg"},
+      {"No":15,"Category":"Towels & Linen","Item Name":"Bath Towel","Description":"70x140 cm, 610 gsm, 100% Ring Spun Cotton, Bright White","Quantity":100,"Unit Price (AED)":17.00,"Total (AED)":1700.00,"image":"/prods/15.jpeg"},
+      {"No":16,"Category":"Towels & Linen","Item Name":"Hand Towel","Description":"50x90 cm, 610 gsm, 100% Ring Spun Cotton, Bright White","Quantity":100,"Unit Price (AED)":8.50,"Total (AED)":850.00,"image":"/prods/16.jpg"},
+      {"No":17,"Category":"Towels & Linen","Item Name":"Face Towel","Description":"30x30 cm, 600 gsm, Hemmed Edge, Bright White","Quantity":100,"Unit Price (AED)":2.25,"Total (AED)":225.00,"image":"/prods/17.jpg"},
+      {"No":18,"Category":"Towels & Linen","Item Name":"Bath Robe (Large)","Description":"100% Cotton Velour, Kimono Style, 450gr, White, 125 cm long","Quantity":100,"Unit Price (AED)":48.00,"Total (AED)":4800.00,"image":"/prods/18.jpg"},
+      {"No":19,"Category":"Towels & Linen","Item Name":"Bath Mat","Description":"50x80 cm, 1000 GSM, Super Soft, Extra Absorbent, White","Quantity":100,"Unit Price (AED)":12.00,"Total (AED)":1200.00,"image":"/prods/19.jpg"},
+      {"No":20,"Category":"Towels & Linen","Item Name":"Shower Curtain","Description":"White 180x180 cm, Spa Hotel Quality, Waterproof, Mildew Resistant","Quantity":100,"Unit Price (AED)":17.00,"Total (AED)":1700.00,"image":"/prods/20.jpg"},
+      {"No":21,"Category":"Towels & Linen","Item Name":"Pool Towel","Description":"90x180 cm, 100% Cotton, Cabana Stripe, Highly Absorbent","Quantity":100,"Unit Price (AED)":28.00,"Total (AED)":2800.00,"image":"/prods/21.jpg"},
+      {"No":22,"Category":"Prayer Mat","Item Name":"Islamic Prayer Mat (Alsaqer Turkey)","Description":"Soft Touch with Cotton Padded Back, Premium Design, Made in Turkey","Quantity":100,"Unit Price (AED)":13.75,"Total (AED)":1375.00,"image":"/prods/22.jpg"}
+    ];
+
+    // ====== helpers ======
+    const money = n => new Intl.NumberFormat('en-AE', {style:'currency', currency:'AED'}).format(n);
+
+    // ====== render filters ======
+    (function initFilters(){
+      const categories = Array.from(new Set(products.map(p => p.Category))).sort();
+      const sel = document.getElementById('category');
+      categories.forEach(c=>{
+        const o = document.createElement('option');
+        o.value = c; o.textContent = c;
+        sel.appendChild(o);
+      });
+
+      // header quick filter clicks
+      document.querySelectorAll('.site-nav a[data-filter]')
+        .forEach(a => a.addEventListener('click', e => {
+          e.preventDefault();
+          sel.value = a.dataset.filter;
+          document.getElementById('search').value = '';
+          render();
+        }));
+    })();
+
+    // ====== rendering logic ======
+    function render(){
+      const q = document.getElementById('search').value.trim().toLowerCase();
+      const cat = document.getElementById('category').value;
+
+      const filtered = products.filter(p => {
+        const matchesCat = !cat || p.Category === cat;
+        const hay = (p["Item Name"] + " " + p.Description + " " + (p.Category||"") + " " + (p.No||"")).toLowerCase();
+        const matchesQ = !q || hay.includes(q);
+        return matchesCat && matchesQ;
+      });
+
+      const wrap = document.getElementById('catalog');
+      wrap.innerHTML = '';
+
+      for (const p of filtered){
+        const card = document.createElement('article');
+        card.className = 'card';
+
+        // optional image (you fill "image" field later)
+        const hasImg = p.image && p.image.trim().length > 0;
+        if (hasImg){
+          const img = document.createElement('img');
+          img.className = 'card-img';
+          img.loading = 'lazy';
+          img.alt = `${p["Item Name"]} photo`;
+          img.src = p.image;
+          card.appendChild(img);
+        }
+
+        card.insertAdjacentHTML('beforeend', `
+          <header class="card-head">
+            <h3>${p["Item Name"]}</h3>
+            <span class="tag">${p.Category}</span>
+          </header>
+          <p class="card-lead">${p.Description}</p>
+          <ul class="specs">
+            <li><strong>Qty:</strong> ${p.Quantity}</li>
+            <li><strong>Unit:</strong> ${money(p["Unit Price (AED)"])}</li>
+            <li><strong>Line Total:</strong> ${money(p["Total (AED)"])}</li>
+            <li class="muted"><strong>SKU:</strong> WARM-${String(p.No).padStart(3,'0')}</li>
+          </ul>
+          <footer class="card-foot">
+            <span class="sku">#${String(p.No).padStart(3,'0')}</span>
+            
+          </footer>
+        `);
+        wrap.appendChild(card);
+      }
+
+      // totals (use full list, not only filtered)
+      const subtotal = products.reduce((s,p)=>s + Number(p["Total (AED)"]||0), 0);
+      const vat = subtotal * 0.05;
+      const grand = subtotal + vat;
+      document.getElementById('subtotal').textContent = money(subtotal);
+      document.getElementById('vat').textContent = money(vat);
+      document.getElementById('grand').textContent = money(grand);
+    }
+
+    // Events
+    document.getElementById('search').addEventListener('input', render);
+    document.getElementById('category').addEventListener('change', render);
+
+    // init
+    document.getElementById('year').textContent = new Date().getFullYear();
+    render();
+  </script>
+</body>
+</html>
